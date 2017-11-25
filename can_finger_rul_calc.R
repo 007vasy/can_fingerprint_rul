@@ -10,6 +10,27 @@ library(ggplot2)
 library(stringr)
 library(RcppRoll)
 
+# \item{elapsed time} 
+# \item{traveled distance} 
+# \item{count in various speed and torque state}
+# \item{changing x direction}
+# \item{changing y direction}
+# \item{is there weight counter (max 3600 in a hour)}
+# \item{steering wheel degree change derived by time aggregated by average}
+
+# \begin{enumerate}
+# \item{join the tire measurement and the hourly aggregated attributes by timestamp}
+# \item{interpolate from the tire measurements to the hourly aggregations}
+# \item{compute the tire diameter change on all the given measurement points}
+# \item{calculate the average diameter change by hourly aggregations} with that the tire diameter change by hourly attribute change is given
+# \item{produce the attributes hourly for a new measurement}
+# \item{calculate the tire diameter change for all attributes based on proportionality}
+# \item{compute the mean tire diameter change by hour}
+# \item{summarize the tire diameter change from last know diameter}
+# \item{if the summary is greater than a given constant, the tire should be changed}
+# \item{compute reaming useful life on the last hours abrasion rate}
+# \end{enumerate}
+
 setwd("/home/vasy/RStudioProjects/still_github/rds_files/")
 export_location="/home/vasy/RStudioProjects/still_github/rul_calc/"
 
@@ -58,5 +79,3 @@ tail(rds_4$date_time,4)
 
 tire_meas_curr
 
-min(rds_1$date_time)
-max(rds_4$date_time)
