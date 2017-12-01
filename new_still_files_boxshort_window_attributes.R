@@ -377,6 +377,15 @@ for(file_name_i in wd_filenames)
   print(min(tdf_attributes$date_time))
   print(max(tdf_attributes$date_time))
   
+  #TODO select only attributes
+  # \item{elapsed time} 
+  # \item{traveled distance} 
+  # \item{count in various speed and torque state}
+  # \item{changing x direction}
+  # \item{changing y direction}
+  # \item{is there weight counter (max 3600 in a hour)}
+  # \item{steering wheel degree change derived by time aggregated by average}
+  
   #savaRDS to attributes
   saveRDS(tdf_attributes,file=paste(export_location,file_name_i,"_att.rds",sep=""))
   print(paste(file_name_i,"_att.rds is saved to: ",export_location,sep = ""))

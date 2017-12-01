@@ -18,7 +18,6 @@ library(RcppRoll)
 # \item{is there weight counter (max 3600 in a hour)}
 # \item{steering wheel degree change derived by time aggregated by average}
 
-# \begin{enumerate}
 # \item{join the tire measurement and the hourly aggregated attributes by timestamp}
 # \item{interpolate from the tire measurements to the hourly aggregations}
 # \item{compute the tire diameter change on all the given measurement points}
@@ -36,10 +35,12 @@ export_location="/home/vasy/RStudioProjects/still_github/rul_calc/"
 
 Filename = "Part 0* Schenker_C_01115_MultiTimeChannel_att"
 
-rds_1 = readRDS("Part 01 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_2 = readRDS("Part 02 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_3 = readRDS("Part 03 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_4 = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_att.rds")
+rds_1_I = readRDS("Part 01 Schenker_C_01115_MultiTimeChannel_att.rds")
+rds_2_I = readRDS("Part 02 Schenker_C_01115_MultiTimeChannel_att.rds")
+rds_3_I = readRDS("Part 03 Schenker_C_01115_MultiTimeChannel_att.rds")
+rds_4_I = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_att.rds")
+
+
 
 # Filename = "Part 0* IMRl_F_00214_MultiTimeChannel_att"
 # 
@@ -79,3 +80,6 @@ tail(rds_4$date_time,4)
 
 tire_meas_curr
 
+rds_1$date_time[1] + 1 + (last(rds_1$date_time)-rds_1$date_time[1])
+
+rds_1$date_time[1] + 1 + (last(rds_4$date_time)-rds_1$date_time[1])
