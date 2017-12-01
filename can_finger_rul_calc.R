@@ -35,12 +35,29 @@ export_location="/home/vasy/RStudioProjects/still_github/rul_calc/"
 
 Filename = "Part 0* Schenker_C_01115_MultiTimeChannel_att"
 
-rds_1_I = readRDS("Part 01 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_2_I = readRDS("Part 02 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_3_I = readRDS("Part 03 Schenker_C_01115_MultiTimeChannel_att.rds")
-rds_4_I = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_att.rds")
+# rds_1_I = readRDS("Part 01 Schenker_C_01115_MultiTimeChannel_only_att.rds")
+# rds_2_I = readRDS("Part 02 Schenker_C_01115_MultiTimeChannel_only_att.rds")
+# rds_3_I = readRDS("Part 03 Schenker_C_01115_MultiTimeChannel_only_att.rds")
+# rds_4_I = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_only_att.rds")
 
+double_the_size_in_time <- function(double_me){
+  double_me_temp = double_me
+  double_me_temp$date_time = double_me_temp$date_time + 1 + last(double_me$date_time) - double_me$date_time[1]
+  return(bind_rows(double_me,double_me_temp))
+}
 
+double_me_wrapper <- function(df_with_date_time_col,doubling_times){
+  if(doubling_times >= 6)
+  {
+    return(df_with_date_time_col)
+  } else if (doubling_times>1) {
+    return(double_the_size_in_time(double_me_wrapper(df_with_date_time_col,doubling_times-1)))
+  }
+  else
+  {  
+    return(double_the_size_in_time(df_with_date_time_col))
+  }
+}
 
 # Filename = "Part 0* IMRl_F_00214_MultiTimeChannel_att"
 # 
@@ -54,29 +71,51 @@ rds_4_I = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_att.rds")
 # rds_3 = readRDS("Part 03 Imperial_D_00125_MultiTimeChannel_att.rds")
 # rds_4 = readRDS("Part 04 Imperial_D_00125_MultiTimeChannel_att.rds")
 
-# rds = readRDS("Part 01 Imperial_D_00125_MultiTimeChannel_att.rds") %>%
-#   bind_rows(readRDS("Part 02 Imperial_D_00125_MultiTimeChannel_att.rds")) %>%
-#   bind_rows(readRDS("Part 03 Imperial_D_00125_MultiTimeChannel_att.rds")) %>%
-#   bind_rows(readRDS("Part 04 Imperial_D_00125_MultiTimeChannel_att.rds"))
+rds = readRDS("Part 01 Imperial_D_00125_MultiTimeChannel_only_att.rds") %>%
+   bind_rows(readRDS("Part 02 Imperial_D_00125_MultiTimeChannel_only_att.rds")) %>%
+   bind_rows(readRDS("Part 03 Imperial_D_00125_MultiTimeChannel_only_att.rds")) %>%
+   bind_rows(readRDS("Part 04 Imperial_D_00125_MultiTimeChannel_only_att.rds"))
+
+rds_2 = 
 
 tire_meas = read_csv("/home/vasy/RStudioProjects/still_github/new_still_files_201710/tobatman_newstill/Still_tire_measurement_201710 - Summary.csv")
+
+tire_meas$`measurement date` = as.POSIXct(ymd(tire_meas$`measurement date`))
 
 tire_meas_curr = tire_meas %>%
   filter(str_detect(Filename,`Measurement file name`))
 
+# rds_1_II = rds_1_I
+# rds_2_II = rds_2_I
+# rds_3_II = rds_3_I
+# rds_4_II = rds_4_I
+# 
+# rds_1_II$date_time = rds_1_II$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_2_II$date_time = rds_2_II$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_3_II$date_time = rds_3_II$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_4_II$date_time = rds_4_II$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# 
+# rds_1_III = rds_1_II
+# rds_2_III = rds_2_II
+# rds_3_III = rds_3_II
+# rds_4_III = rds_4_II
+# 
+# rds_1_III$date_time = rds_1_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_2_III$date_time = rds_2_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_3_III$date_time = rds_3_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
+# rds_4_III$date_time = rds_4_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
 
+head(rds_1_I$date_time,4)
+tail(rds_1_I$date_time,4)
 
-head(rds_1$date_time,4)
-tail(rds_1$date_time,4)
+head(rds_2_I$date_time,4)
+tail(rds_2_I$date_time,4)
 
-head(rds_2$date_time,4)
-tail(rds_2$date_time,4)
+head(rds_3_I$date_time,4)
+tail(rds_3_I$date_time,4)
 
-head(rds_3$date_time,4)
-tail(rds_3$date_time,4)
-
-head(rds_4$date_time,4)
-tail(rds_4$date_time,4)
+head(rds_4_I$date_time,4)
+tail(rds_4_I$date_time,4)
 
 tire_meas_curr
 
