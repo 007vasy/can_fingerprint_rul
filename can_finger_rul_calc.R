@@ -41,12 +41,14 @@ Filename = "Part 0* Schenker_C_01115_MultiTimeChannel_att"
 # rds_4_I = readRDS("Part 04 Schenker_C_01115_MultiTimeChannel_only_att.rds")
 
 double_the_size_in_time <- function(double_me){
+  #colname could be useful
   double_me_temp = double_me
-  double_me_temp$date_time = double_me_temp$date_time + 1 + last(double_me$date_time) - double_me$date_time[1]
+  double_me_temp$date_time = double_me_temp$date_time + 1 + (last(double_me$date_time) - double_me$date_time[1])
   return(bind_rows(double_me,double_me_temp))
 }
 
 double_me_wrapper <- function(df_with_date_time_col,doubling_times){
+  #colname could be useful
   if(doubling_times >= 6)
   {
     return(df_with_date_time_col)
@@ -76,7 +78,6 @@ rds = readRDS("Part 01 Imperial_D_00125_MultiTimeChannel_only_att.rds") %>%
    bind_rows(readRDS("Part 03 Imperial_D_00125_MultiTimeChannel_only_att.rds")) %>%
    bind_rows(readRDS("Part 04 Imperial_D_00125_MultiTimeChannel_only_att.rds"))
 
-rds_2 = 
 
 tire_meas = read_csv("/home/vasy/RStudioProjects/still_github/new_still_files_201710/tobatman_newstill/Still_tire_measurement_201710 - Summary.csv")
 
@@ -85,6 +86,12 @@ tire_meas$`measurement date` = as.POSIXct(ymd(tire_meas$`measurement date`))
 tire_meas_curr = tire_meas %>%
   filter(str_detect(Filename,`Measurement file name`))
 
+rds_temp = double_the_size_in_time(rds)
+
+rds_2_time = double_me_wrapper(rds,2)
+
+#rds_3_time = double_me_wrapper(rds,3)
+# 
 # rds_1_II = rds_1_I
 # rds_2_II = rds_2_I
 # rds_3_II = rds_3_I
