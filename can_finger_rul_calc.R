@@ -80,6 +80,6 @@ tail(rds_4$date_time,4)
 
 tire_meas_curr
 
-rds_1$date_time[1] + 1 + (last(rds_1$date_time)-rds_1$date_time[1])
+#rds_1$date_time[1] + 1 + (last(rds_1$date_time)-rds_1$date_time[1])
 
-rds_1$date_time[1] + 1 + (last(rds_4$date_time)-rds_1$date_time[1])
+#rds_1$date_time[1] + 1 + (last(rds_4$date_time)-rds_1$date_time[1])

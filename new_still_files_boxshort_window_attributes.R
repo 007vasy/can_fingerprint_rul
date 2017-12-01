@@ -377,6 +377,28 @@ for(file_name_i in wd_filenames)
   print(min(tdf_attributes$date_time))
   print(max(tdf_attributes$date_time))
   
+
+  
+  #savaRDS to attributes
+  saveRDS(tdf_attributes,file=paste(export_location,file_name_i,"_att.rds",sep=""))
+  print(paste(file_name_i,"_att.rds is saved to: ",export_location,sep = ""))
+  
+  only_att = tdf_attributes %>%
+    select(
+      date_time,
+      abs_trav_distance_dt,
+      speed_torque_1_factor,
+      speed_torque_2_factor,
+      is.speed_torque_factor_equal,
+      speed_1_direction_changed,
+      speed_2_direction_changed,
+      torque_1_direction_changed,
+      torque_2_direction_changed,
+      is.changed_y_direction,
+      is.y_direction_0,
+      is.weight,
+      steer_wheel_deg_t_deriv
+    )
   #TODO select only attributes
   # \item{elapsed time} 
   # \item{traveled distance} 
@@ -385,9 +407,7 @@ for(file_name_i in wd_filenames)
   # \item{changing y direction}
   # \item{is there weight counter (max 3600 in a hour)}
   # \item{steering wheel degree change derived by time aggregated by average}
-  
-  #savaRDS to attributes
-  saveRDS(tdf_attributes,file=paste(export_location,file_name_i,"_att.rds",sep=""))
-  print(paste(file_name_i,"_att.rds is saved to: ",export_location,sep = ""))
+  saveRDS(only_att,file=paste(export_location,file_name_i,"_only_att.rds",sep=""))
+  print(paste(file_name_i,"_only_att.rds is saved to: ",export_location,sep = ""))
 }
 
