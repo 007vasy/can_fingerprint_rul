@@ -98,7 +98,7 @@ rds_temp = double_the_size_in_time(rds)
 rds_not_hourly = double_me_wrapper(rds,4)
 
 rds_RUL_factor = rds_not_hourly %>%
-  dummy
+  dummyVars()
 
 rds_RUL = rds_not_hourly %>%
   select(-speed_torque_1_factor,-speed_torque_2_factor)
