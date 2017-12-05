@@ -9,6 +9,7 @@ library(readr)
 library(ggplot2)
 library(stringr)
 library(RcppRoll)
+library(caret)
 
 # \item{elapsed time} 
 # \item{traveled distance} 
@@ -94,8 +95,19 @@ tire_meas_curr = tire_meas %>%
 
 rds_temp = double_the_size_in_time(rds)
 
-rds_RUL = double_me_wrapper(rds,4)
+rds_not_hourly = double_me_wrapper(rds,4)
 
+rds_RUL_factor = rds_not_hourly %>%
+  dummy
+
+rds_RUL = rds_not_hourly %>%
+  select(-speed_torque_1_factor,-speed_torque_2_factor)
+  mutate(date = ymd(dat_time), hour = date_time$hour) %>%
+  group_by(date,hour) %>%
+  select(-date_time) %>%
+  summarise_all(sum)
+  bind_cols(rds_RUL_factor)
+  
 # rds_2_time = rds_2_time %>%
 #   mutate(
 #     FL_4 = NA,
@@ -117,12 +129,16 @@ rds_RUL = double_me_wrapper(rds,4)
 #     BR_3 = NA
 #   )
 
-rds_RUL = rds_RUL %>% 
+rds_RUL_data = rds_RUL %>% 
   left_join(tire_meas_curr, by = c("date_time" = `measurement date`))
   select(date_time,`FL 4`,`FL 3`,`FL 2`,`FL 1`,`FR 1`,`FR 2`,`FR 3`,`FR 4`,`BL 3`,`BL 2`,`BL 1`,`BR 1`,`BR 2`,`BR 3`) %>% 
+  na.approx() %>%
+  as.data.frame() %>%
+  mutate(FL = mean(`FL 4`,`FL 3`,`FL 2`,`FL 1`),FR = mean(`FR 1`,`FR 2`,`FR 3`,`FR 4`),BL = mean(`BL 3`,`BL 2`,`BL 1`), BR = mean(`BR 1`,`BR 2`,`BR 3`)) %>%
+  select(date_time,FL,FR,BL,BR) %>%
+  right_join(rds_RUL, by = c("date_time" = "date_time"))  
 
-#NA cols to the measurement
-
+rds_RUL_data  
 #rds_3_time = double_me_wrapper(rds,3)
 # 
 # rds_1_II = rds_1_I
@@ -144,18 +160,6 @@ rds_RUL = rds_RUL %>%
 # rds_2_III$date_time = rds_2_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
 # rds_3_III$date_time = rds_3_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
 # rds_4_III$date_time = rds_4_III$date_time + 1 + (last(rds_4_I$date_time)-rds_1_I$date_time[1])
-
-head(rds_1_I$date_time,4)
-tail(rds_1_I$date_time,4)
-
-head(rds_2_I$date_time,4)
-tail(rds_2_I$date_time,4)
-
-head(rds_3_I$date_time,4)
-tail(rds_3_I$date_time,4)
-
-head(rds_4_I$date_time,4)
-tail(rds_4_I$date_time,4)
 
 tire_meas_curr
 
