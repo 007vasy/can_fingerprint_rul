@@ -10,7 +10,7 @@ library(stringr)
 library(lubridate)
 
 
-print("asd!")
+
 
 #contans
 is.weight_limit = 50
@@ -90,6 +90,8 @@ for(file_name_i in wd_filenames)
     
     #make new column in fp_df
     fp_df = mutate(fp_df, temp_col = as.numeric("NA"))
+    
+    print("asd!")
     
     temp_df = temp_list[[w_column]] %>%
       as.data.frame() %>%
