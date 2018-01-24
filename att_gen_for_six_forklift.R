@@ -58,6 +58,9 @@ for(file_name_i in wd_filenames)
   #print(names(temp_list))
   
   #all timestamp possibilites for boxshort (max calculated /file)
+  print(max(
+    temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
+  ))
   fp_df = data.frame(
     0:(
       max(
