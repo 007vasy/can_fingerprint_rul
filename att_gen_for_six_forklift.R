@@ -1,9 +1,9 @@
 #Still CAN fingerprint dec.20 big files 6 forklift- Vass Bence
 #Attribute gen for Ansgar
 library(R.matlab)
-library(dplyr)
 library(purrr)
 library(plyr)
+library(dplyr)
 library(lubridate)
 library(zoo)
 library(readr)
@@ -12,12 +12,7 @@ library(stringr)
 library(RcppRoll)
 
 #contans
-w_width = 1
-if(w_width%%2!=0)
-  print("Must be even!")
 is.weight_limit = 50
-big_resonation_limit_plus = 300
-big_resonation_limit_minus = 250
 d_wheel = 0.467 # from catalog
 
 #resolution for factor matrix
@@ -28,8 +23,6 @@ speed_max = 5000
 torque_max = 80
 
 smoothing = 1 # window size
-
-deriv_dist = 1 # changed for travelled distance calc
 
 #where the files to be boxshorted
 
