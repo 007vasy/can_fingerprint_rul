@@ -34,15 +34,15 @@ deriv_dist = 1 # changed for travelled distance calc
 #where the files to be boxshorted
 
 #PAKS3 (batman)
-setwd("/home/vassb/ephemeral-account/")
-export_location="/home/vassb/box_window_att_files/"
+setwd("/home/vassb/fingerprint_data/")
+export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift/"
 
 #PC
 # setwd("/home/vasy/RStudioProjects/still_github/RStudio_wd_Can_fp/")
 # export_location="/home/vasy/RStudioProjects/still_github/cleaned_files/"
 
 #Cut of ".mat" for classification categories
-wd_filenames = list.files()
+wd_filenames = list.files(pattern = '\\.mat$')
 
 for(i in 1:length(wd_filenames)){
   wd_filenames[i]=gsub(".mat","",c(wd_filenames[i]),fixed = TRUE)
