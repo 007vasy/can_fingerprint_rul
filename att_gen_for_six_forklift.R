@@ -18,8 +18,10 @@ d_wheel = 0.467 # from catalog
 
 #resolution for factor matrix
 reso_m = 7 #must be odd!!!
+print("asd1!")
 if(reso_m%%2!=1)
   print("Must be odd!")
+print("asd2!")
 speed_max = 5000
 torque_max = 80
 
@@ -91,7 +93,7 @@ for(file_name_i in wd_filenames)
     #make new column in fp_df
     fp_df = mutate(fp_df, temp_col = as.numeric("NA"))
     
-    print("asd!")
+ 
     
     temp_df = temp_list[[w_column]] %>%
       as.data.frame() %>%
