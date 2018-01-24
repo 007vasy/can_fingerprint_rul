@@ -68,6 +68,7 @@ for(file_name_i in wd_filenames)
   )
   names(fp_df) = "time_ID"
   
+  
   #box short all rows (in descending nrow order)
   for(w_column in names(temp_list))
   {
@@ -190,9 +191,7 @@ for(file_name_i in wd_filenames)
   
     #moving average with groupby and summary
     group_by(Year_y,Month_mo,Day_d,Hour_h,Minute_m,Second_s) %>%
-    summerize_each(funs(mean))
-    
-    %>%
+    summerize_each(funs(mean)) %>%
     #date time convert with lubridate separeted  (time_ID leave separated, with the lubridate package it can be merged)
     mutate(date = ymd(paste(Year_y,Month_mo,Day_d)),time = hms(paste(Hour_h,Minute_m,Second_s))) %>%
     #drop redundant values
