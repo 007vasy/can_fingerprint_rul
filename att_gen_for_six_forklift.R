@@ -12,7 +12,7 @@ library(stringr)
 library(RcppRoll)
 
 #contans
-w_width = 10
+w_width = 1
 if(w_width%%2!=0)
   print("Must be even!")
 is.weight_limit = 50
@@ -21,7 +21,7 @@ big_resonation_limit_minus = 250
 d_wheel = 0.467 # from catalog
 
 #resolution for factor matrix
-reso_m = 9 #must be odd!!!
+reso_m = 7 #must be odd!!!
 if(reso_m%%2!=1)
   print("Must be odd!")
 speed_max = 5000
@@ -165,34 +165,6 @@ for(file_name_i in wd_filenames)
                         "Torque_Drivemotor_2_Nm",
                         "Torque_Drivemotor_1_Nm")
   
-  #filter out fully NA rows () reamainig of the boxshort
-  # df_fp_tidy = filter(df_fp_tidy,
-  #                     !(is.na(Second_s)&
-  #                         is.na(Minute_m)&
-  #                         is.na(Hour_h)&
-  #                         is.na(Day_d)&
-  #                         is.na(Month_mo)&
-  #                         is.na(Year_y)&
-  #                         is.na(Speed_Steering_wheel_RPM)&
-  #                         is.na(Steering_angle_angle)&
-  #                         is.na(Speed_pump_motor_RPM)&
-  #                         is.na(Torque_pump_motor_Nm)&
-  #                         is.na(Crash_Z_0.01g)&
-  #                         is.na(Crash_Y_0.01g)&
-  #                         is.na(Crash_X_0.01g)&
-  #                         is.na(Crash_W_0.01g)&
-  #                         is.na(Lever_position_Add2_mV_base_4000mV)&
-  #                         is.na(Lever_position_Add1_mV_base_4000mV)&
-  #                         is.na(Lever_position_tilting_mV_base_4000mV)&
-  #                         is.na(Lever_position_lifting_mV_base_4000mV)&
-  #                         is.na(Speed_Drivemotor_2_RPM)&
-  #                         is.na(Speed_Drivemotor_1_RPM)&
-  #                         is.na(Torque_Drivemotor_2_Nm)&
-  #                         is.na(Torque_Drivemotor_1_Nm)
-  #                     )
-  # )
-  #interpolation
-  
   #look up first and last value for the interpolation
   for(col in names(df_fp_tidy))
   {
@@ -217,6 +189,12 @@ for(file_name_i in wd_filenames)
       Day_d = floor(Day_d),
       Month_mo = floor(Month_mo),
       Year_y = floor(Year_y)) %>%
+  
+    #moving average with groupby and summary
+    group_by(Year_y,Month_mo,Day_d,Hour_h,Minute_m,Second_s) %>%
+    summerize_each(funs(mean))
+    
+    %>%
     #date time convert with lubridate separeted  (time_ID leave separated, with the lubridate package it can be merged)
     mutate(date = ymd(paste(Year_y,Month_mo,Day_d)),time = hms(paste(Hour_h,Minute_m,Second_s))) %>%
     #drop redundant values
@@ -281,25 +259,14 @@ for(file_name_i in wd_filenames)
   #is.weight on the truck
   tdf_attributes = mutate(
     df_fp_tidy_no_na,
-    weight_mean = c(rep(0,w_width/2),
-                    roll_mean(Lever_position_lifting_mV_base_4000mV,w_width,fill = numeric(0),align = "center"),
-                    rep(0,w_width/2 - 1 )
-    ),
-    is.weight = weight_mean > is.weight_limit, #contans from plots
-    
-    resonation_mean = c(rep(0,w_width/2),
-                        roll_mean(Crash_Z_0.01g,w_width,fill = numeric(0),align = "center"),
-                        rep(0,w_width/2 - 1)
-    ),
-    big_resonation_event = resonation_mean > big_resonation_limit_plus | resonation_mean < big_resonation_limit_minus
-    
+
+    is.weight = Lever_position_lifting_mV_base_4000mV > is.weight_limit #contans from plots
   ) %>%
     
     #smoohting used in direction and derivatives
     
     #changing x and y direction
     mutate(
-      tdf_attributes,
       speed_1_direction_changed = direction_check(Speed_Drivemotor_1_RPM,lag(Speed_Drivemotor_1_RPM,n=smoothing,default = 0)),
       speed_2_direction_changed = direction_check(Speed_Drivemotor_2_RPM,lag(Speed_Drivemotor_2_RPM,n=smoothing,default = 0)),
       torque_1_direction_changed = direction_check(Torque_Drivemotor_1_Nm,lag(Torque_Drivemotor_1_Nm,n=smoothing,default = 0)),
@@ -330,56 +297,6 @@ for(file_name_i in wd_filenames)
       is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor
     ) %>%
     
-    #derivatives speed, torque, steering angle and steering speed + resonation calculated from Crash_Z
-    
-    mutate(
-      tdf_attributes,
-      
-      s_1_t_deriv = abs((lag(Speed_Drivemotor_1_RPM,n=smoothing,default = 0) - Speed_Drivemotor_1_RPM))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s), 
-      s_2_t_deriv = abs((lag(Speed_Drivemotor_2_RPM,n=smoothing,default = 0) - Speed_Drivemotor_2_RPM))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s), 
-      
-      t_1_t_deriv = abs((lag(Torque_Drivemotor_1_Nm,n=smoothing,default = 0) - Torque_Drivemotor_1_Nm))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s), 
-      t_2_t_deriv = abs((lag(Torque_Drivemotor_2_Nm,n=smoothing,default = 0) - Torque_Drivemotor_2_Nm))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s), 
-      
-      speed_steering_deriv = abs((lag(Speed_Steering_wheel_RPM,n=smoothing,default = 0) - Speed_Steering_wheel_RPM))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s),
-      steer_wheel_deg_t_deriv = abs((lag(Steering_angle_angle,n=smoothing,default = 0) - Steering_angle_angle))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s),
-      resonation_t_deriv = abs((lag(Crash_Z_0.01g,n=smoothing,default = 0) - Crash_Z_0.01g))/(lag(time_ID_s,n=smoothing,default = 0)-time_ID_s)
-      
-    ) %>%
-    #+ travelled dsitance smooting correction
-    #speed convert from U/min to m/s still max speed is 20km/h so 3.6km/h / 1m/s 5.55 m/s, the max U is 3453 so speed_m/s = speedU*5.555/3453 and 
-    
-    mutate(
-      tdf_attributes,
-      #check
-      #v = r × RPM × 0.10472
-      speed_d1 = (d_wheel * Speed_Drivemotor_1_RPM * 2*pi/60/2),
-      speed_d2 = (d_wheel * Speed_Drivemotor_2_RPM * 2*pi/60/2),
-      #delta distance
-      abs_trav_distance_dt = abs(
-        #delta velocity
-        mean(c(lag(speed_d1,n=deriv_dist,default = 0),lag(speed_d2,n=deriv_dist,default = 0)))
-        -
-          mean(c(speed_d1,speed_d2))
-      )
-      *
-        #delta time
-        (lag(time_ID_s,n=deriv_dist,default = 0)-time_ID_s)
-      +
-        #delta acceleration
-        abs(lag(Crash_X_0.01g,n=deriv_dist,default = 0) - Crash_X_0.01g)
-      *
-        (lag(time_ID_s,n=deriv_dist,default = 0)-time_ID_s)^2/2
-      
-    )
-  
-  # calc avg speed
-  print(sum(tdf_attributes$abs_trav_distance_dt))
-  print(min(tdf_attributes$date_time))
-  print(max(tdf_attributes$date_time))
-  
-  
-  
   #savaRDS to attributes
   saveRDS(tdf_attributes,file=paste(export_location,file_name_i,"_att.rds",sep=""))
   print(paste(file_name_i,"_att.rds is saved to: ",export_location,sep = ""))
@@ -387,7 +304,6 @@ for(file_name_i in wd_filenames)
   only_att = tdf_attributes %>%
     select(
       date_time,
-      abs_trav_distance_dt,
       speed_torque_1_factor,
       speed_torque_2_factor,
       is.speed_torque_factor_equal,
@@ -397,17 +313,9 @@ for(file_name_i in wd_filenames)
       torque_2_direction_changed,
       is.changed_y_direction,
       is.y_direction_0,
-      is.weight,
-      steer_wheel_deg_t_deriv
+      is.weight
     )
-  #TODO select only attributes
-  # \item{elapsed time} 
-  # \item{traveled distance} 
-  # \item{count in various speed and torque state}
-  # \item{changing x direction}
-  # \item{changing y direction}
-  # \item{is there weight counter (max 3600 in a hour)}
-  # \item{steering wheel degree change derived by time aggregated by average}
+
   saveRDS(only_att,file=paste(export_location,file_name_i,"_only_att.rds",sep=""))
   print(paste(file_name_i,"_only_att.rds is saved to: ",export_location,sep = ""))
 }
