@@ -10,6 +10,7 @@ library(stringr)
 library(lubridate)
 
 
+print("asd!")
 
 #contans
 is.weight_limit = 50
