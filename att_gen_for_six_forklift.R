@@ -61,17 +61,18 @@ for(file_name_i in wd_filenames)
   print(max(
     temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
   ))
-  fp_df = data.frame(
-    0:(
-      max(
-        temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
-      )
-      + 1
-    )
-  )
+  # fp_df = data.frame(
+  #   0:(
+  #     max(
+  #       temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
+  #     )
+  #     + 1
+  #   )
+  # )
+  # names(fp_df) = "time_ID"
+  # 
+  fp_df =  data.frame(temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1])
   names(fp_df) = "time_ID"
-  
-  
   #box short all rows (in descending nrow order)
   for(w_column in names(temp_list))
   {
@@ -105,7 +106,7 @@ for(file_name_i in wd_filenames)
       group_by(V1) %>%
       summarise_all(mean,na.rm = TRUE)
     
-    fp_df = left_join(fp_df,temp_df, by = c("time_ID" = "V1"))
+    fp_df = full_join(fp_df,temp_df, by = c("time_ID" = "V1"))
     
     #rename temp_col to actual colname (df ready for the new mutate)
     names(fp_df) = gsub("V2",w_column,names(fp_df))
