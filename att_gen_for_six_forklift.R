@@ -72,7 +72,10 @@ for(file_name_i in wd_filenames)
   # names(fp_df) = "time_ID"
   # 
   fp_df =  data.frame(temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1])
+  print(names(fp_df))
   names(fp_df) = "time_ID"
+  
+  
   #box short all rows (in descending nrow order)
   for(w_column in names(temp_list))
   {
