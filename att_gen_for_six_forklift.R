@@ -8,8 +8,9 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(lubridate)
-
-
+library(iotools)
+library(bigtabulate)
+library(bigmemory)
 
 
 #contans
@@ -39,7 +40,7 @@ export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift/"
 
 #Cut of ".mat" for classification categories
 wd_filenames = list.files(pattern = '\\.mat$')
-
+fp_df = data.frame()
 for(i in 1:length(wd_filenames)){
   wd_filenames[i]=gsub(".mat","",c(wd_filenames[i]),fixed = TRUE)
 }
@@ -48,19 +49,40 @@ for(i in 1:length(wd_filenames)){
 # {
 #   print(file_name)
 # }
-
+temp_list = list()
 #loop through files in wd
 for(file_name_i in wd_filenames)
 {
   print(paste("file:",file_name_i))
-  temp_list = readMat(paste(file_name_i,".mat",sep=""))
+  #temp_list = readMat(paste(file_name_i,".mat",sep=""))
+
+  fp_df <- chunk.apply(paste(file_name_i,".mat",sep=""),
+                                # A function to process each of the chunk
+                                function(chunk) {
+                                  # Turn the chunk into a data frame
+                                  for(colName in names(chunk)) {
+                                   temp_list$colName=rbind(temp_list$colName,dstrsplit(chunk[[colName]], col_types = rep("numeric", 2), sep = ",") %>%
+                                      mutate(V1 = round(V1)) %>%
+                                      group_by(V1) %>%
+                                      summarise_all(mean,na.rm = FALSE) %>%
+                                      as.list()
+                                   )
+                                  }
+                                  join_all(temp_list, by='V1', type = 'outer') %>%
+                                  as.data.frame()
+                                  
+                                  # Return the column sums
+                                  
+                                },
+                                # Maximum chunk size in bytes
+                                CH.MAX.SIZE = 1e5)
+  # 2 processors read and process data
+  #parallel = 2)
+  
   #glimpse(temp_list)
   #print(names(temp_list))
   
   #all timestamp possibilites for boxshort (max calculated /file)
-  print(max(
-    temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
-  ))
   # fp_df = data.frame(
   #   0:(
   #     max(
@@ -71,50 +93,10 @@ for(file_name_i in wd_filenames)
   # )
   # names(fp_df) = "time_ID"
   # 
-  fp_df =  data.frame(temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1])
-  print(names(fp_df))
-  names(fp_df) = "time_ID"
+
+  #print(names(fp_df))
+  #names(fp_df) = "time_ID"
   
-  
-  #box short all rows (in descending nrow order)
-  for(w_column in names(temp_list))
-  {
-    #drop not usefull columns
-    # if(
-    #   w_column == "Crash.Flag....................................................." |
-    #   w_column == "Crash.WD......................................................." | 
-    #   w_column == "Thermo.01.K4..................................................." |
-    #   w_column == "Thermo.01.K3..................................................." |
-    #   w_column == "Thermo.01.K2..................................................." |
-    #   w_column == "Thermo.01.K1..................................................." |
-    #   w_column == "Thermo.01.K8..................................................." |
-    #   w_column == "Thermo.01.K7..................................................." |
-    #   w_column == "Thermo.01.K6..................................................." |
-    #   w_column == "Thermo.01.K5..................................................." 
-    # )
-    # {
-    #   #print(paste(w_column," is skipped",sep=""))
-    #   next()
-    # }
-    print(w_column)
-    
-    #make new column in fp_df
-    fp_df = mutate(fp_df, temp_col = as.numeric("NA"))
-    
-    print("asd2!")
-    
-    temp_df = temp_list[[w_column]] %>%
-      as.data.frame() %>%
-      mutate(V1 = round(V1)) %>%
-      group_by(V1) %>%
-      summarise_all(mean,na.rm = TRUE)
-    
-    fp_df = full_join(fp_df,temp_df, by = c("time_ID" = "V1"))
-    
-    #rename temp_col to actual colname (df ready for the new mutate)
-    names(fp_df) = gsub("V2",w_column,names(fp_df))
-  }
-  warnings()
   
   #cleaning solution
   df_fp_tidy = fp_df %>% 
