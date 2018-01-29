@@ -95,15 +95,14 @@ for(file_name_i in wd_filenames)
   # 
 
   #print(names(fp_df))
-  #names(fp_df) = "time_ID"
-  
+  #
   
   #cleaning solution
   df_fp_tidy = fp_df %>% 
     #drop meaningless values  
     #rearrenge columns to properly rename them  
     select(
-      time_ID,
+      V1,
       A5.Sekunde.....................................................,
       A4.Minute......................................................,
       A3.Stunde......................................................,
@@ -153,22 +152,6 @@ for(file_name_i in wd_filenames)
                         "Torque_Drivemotor_2_Nm",
                         "Torque_Drivemotor_1_Nm")
   
-  #look up first and last value for the interpolation
-  for(col in names(df_fp_tidy))
-  {
-    df_fp_tidy[[col]][1] = df_fp_tidy[[col]][min(which(!is.na(df_fp_tidy[[col]])))]
-    df_fp_tidy[[col]][length(df_fp_tidy[[col]])] = df_fp_tidy[[col]][max(which(!is.na(df_fp_tidy[[col]])))]
-  }
-  
-  #switch remaining NA-s to inperpolated values
-  df_fp_tidy_no_na = df_fp_tidy %>%
-    na.approx() %>%
-    as.data.frame() %>%
-    #when the is to much NA value (time related columns) last observation carried forward  
-    colwise(na.locf)() %>%
-    
-    
-    
     #correct time related values (no value after decimal needed)
     mutate(
       Second_s = floor(Second_s),
@@ -177,10 +160,7 @@ for(file_name_i in wd_filenames)
       Day_d = floor(Day_d),
       Month_mo = floor(Month_mo),
       Year_y = floor(Year_y)) %>%
-  
-    #moving average with groupby and summary
-    group_by(Year_y,Month_mo,Day_d,Hour_h,Minute_m,Second_s) %>%
-    summerize_each(funs(mean)) %>%
+
     #date time convert with lubridate separeted  (time_ID leave separated, with the lubridate package it can be merged)
     mutate(date = ymd(paste(Year_y,Month_mo,Day_d)),time = hms(paste(Hour_h,Minute_m,Second_s))) %>%
     #drop redundant values
@@ -280,6 +260,8 @@ for(file_name_i in wd_filenames)
       speed_torque_1_factor = as.factor(speed_torque_1_factor,levels = factor_variations(reso_m)),
       speed_torque_2_factor = as.factor(speed_torque_2_factor,levels = factor_variations(reso_m)),
       
+      driving_or_standing = Speed_Drivemotor_1_RPM == 0 & Speed_Drivemotor_2_RPM == 0 & Torque_Drivemotor_1_Nm == 0 & Torque_Drivemotor_1_Nm == 0,
+      
       is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor
     ) %>%
     
@@ -290,16 +272,19 @@ for(file_name_i in wd_filenames)
   only_att = tdf_attributes %>%
     select(
       date_time,
+      Speed_Drivemotor_2_RPM,
+      Speed_Drivemotor_1_RPM,
+      Torque_Drivemotor_2_Nm,
+      Torque_Drivemotor_1_Nm,
+      Steering_angle_angle, 
+      
+      #events
       speed_torque_1_factor,
       speed_torque_2_factor,
-      is.speed_torque_factor_equal,
-      speed_1_direction_changed,
-      speed_2_direction_changed,
-      torque_1_direction_changed,
-      torque_2_direction_changed,
-      is.changed_y_direction,
       is.y_direction_0,
-      is.weight
+      #TODO from Ansgar Simulink
+      is.weight,
+      driving_or_standing
     )
 
   saveRDS(only_att,file=paste(export_location,file_name_i,"_only_att.rds",sep=""))
