@@ -102,7 +102,8 @@ for(file_name_i in wd_filenames)
   df_fp_tidy = fp_df %>% 
     #drop meaningless values  
     #rearrenge columns to properly rename them  
-    select(
+  # TODO TIME ID S for python
+  select(
       V1,
       A5.Sekunde.....................................................,
       A4.Minute......................................................,
