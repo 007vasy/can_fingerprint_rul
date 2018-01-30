@@ -14,17 +14,17 @@ export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
 wd_filenames = as.data.frame(list.files(pattern = '\\.csv$'),col.names = 'filenames') %>%
   mutate(truck_cat = function(x = .filenames){
     if(str_detect(x,'Daimler F 00150'))
-      return(as.factor('Daimler F 00150'))
+      return('Daimler F 00150')
     else if(str_detect(x,'Daimler F 00166'))
-      return(as.factor('Daimler F 00166'))
+      return('Daimler F 00166')
     else if(str_detect(x,'Daimler F 00192'))
-      return(as.factor('Daimler F 00192'))
+      return('Daimler F 00192')
     else if(str_detect(x,'Imperial_D_00125'))
-      return(as.factor('Imperial_D_00125'))
+      return('Imperial_D_00125')
     else if(str_detect(x,'IMRl_F_00214'))
-      return(as.factor('IMRl_F_00214'))
+      return('IMRl_F_00214')
     else if(str_detect(x,'Daimler F 00166'))
-      return(as.factor('Schenker_C_01115'))
+      return('Schenker_C_01115')
     }
   ) %>%
   groupby(truck_cat) %>%
