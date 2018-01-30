@@ -61,12 +61,13 @@ for(file_name_i in wd_filenames)
                                 function(chunk) {
                                   # Turn the chunk into a data frame
                                   for(colName in names(chunk)) {
-                                   temp_list$colName=rbind(temp_list$colName,dstrsplit(chunk[[colName]], col_types = rep("numeric", 2), sep = ",") %>%
-                                      mutate(V1 = round(V1)) %>%
-                                      group_by(V1) %>%
-                                      summarise_all(mean,na.rm = FALSE) %>%
-                                      as.list()
-                                   )
+                                    print(names(chunk[[colName]]))
+                                   # temp_list$colName=rbind(temp_list$colName,dstrsplit(chunk[[colName]], col_types = rep("numeric", 2), sep = ",") %>%
+                                   #    mutate(V1 = round(V1)) %>%
+                                   #    group_by(V1) %>%
+                                   #    summarise_all(mean,na.rm = FALSE) %>%
+                                   #    as.list()
+                                   #)
                                   }
                                   join_all(temp_list, by='V1', type = 'outer') %>%
                                   as.data.frame()
