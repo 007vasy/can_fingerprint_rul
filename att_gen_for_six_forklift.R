@@ -104,7 +104,7 @@ for(file_name_i in wd_filenames)
     #rearrenge columns to properly rename them  
   # TODO TIME ID S for python
   select(
-      V1,
+      time_ID_s,
       A5.Sekunde.....................................................,
       A4.Minute......................................................,
       A3.Stunde......................................................,
