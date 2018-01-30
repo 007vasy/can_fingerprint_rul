@@ -12,7 +12,8 @@ setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift/")
 export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
 
 wd_filenames = as.data.frame(list.files(pattern = '\\.csv$'),col.names = 'filenames') %>%
-  mutate(truck_cat = function(x = .filenames){
+  transform(filenames = as.character(filenames)) %>%
+  mutate(truck_cat = function(x = filenames){
     if(str_detect(x,'Daimler F 00150'))
       return('Daimler F 00150')
     else if(str_detect(x,'Daimler F 00166'))
