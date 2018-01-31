@@ -18,7 +18,6 @@ reso_m = 7 #must be odd!!!
 
 if(reso_m%%2!=1)
   print("Must be odd!")
-print("asd1!")
 speed_max = 5000
 torque_max = 80
 
