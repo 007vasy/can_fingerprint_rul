@@ -107,7 +107,7 @@ for(file_name_i in wd_filenames)
                         "Torque_Drivemotor_1_Nm")
   
     #correct time related values (no value after decimal needed)
-    mutate(
+    df_fp_tidy_no_na = mutate(df_fp_tidy,
       Second_s = floor(Second_s),
       Minute_m = floor(Minute_m),
       Hour_h = floor(Hour_h),
