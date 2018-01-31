@@ -205,13 +205,13 @@ for(file_name_i in wd_filenames)
       speed_2_modulo_factor = drivemotor_category_modulo_calc(Speed_Drivemotor_2_RPM,speed_max,reso_m),
       torque_1_modulo_factor = drivemotor_category_modulo_calc(Torque_Drivemotor_1_Nm,torque_max,reso_m),
       torque_2_modulo_factor = drivemotor_category_modulo_calc(Torque_Drivemotor_2_Nm,torque_max,reso_m),
-      
-      speed_torque_1_factor = paste(speed_1_modulo_factor,torque_1_modulo_factor,sep=","),
-      speed_torque_2_factor = paste(speed_2_modulo_factor,torque_2_modulo_factor,sep=","),
+
+      speed_torque_1_factor = as.factor(levels = factor_variations(reso_m)),
+      speed_torque_2_factor = as.factor(levels = factor_variations(reso_m)),
+            
+      speed_torque_1_factor = as.factor(paste(speed_1_modulo_factor,torque_1_modulo_factor,sep=",")),
+      speed_torque_2_factor = as.factor(paste(speed_2_modulo_factor,torque_2_modulo_factor,sep=",")),
  
-      speed_torque_1_factor = as.factor(speed_torque_1_factor,levels = factor_variations(reso_m)),
-      speed_torque_2_factor = as.factor(speed_torque_2_factor,levels = factor_variations(reso_m)),
-      
       driving_or_standing = Speed_Drivemotor_1_RPM == 0 & Speed_Drivemotor_2_RPM == 0 & Torque_Drivemotor_1_Nm == 0 & Torque_Drivemotor_1_Nm == 0,
       
       is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor
