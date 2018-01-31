@@ -7,9 +7,12 @@ library(ggplot2)
 library(stringr)
 library(lubridate)
 
+#PC
+#setwd("/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/")
+#export_location="/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/merged_machines/"
 #PAKS3 (batman)
-setwd("/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/")
-export_location="/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/merged_machines/"
+setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift/")
+export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
 
 truck_category <- function(x){
   if(str_detect(x,'Daimler F 00150'))
@@ -37,7 +40,27 @@ for(i in 1:length(wd_filenames$filenames)){
  wd_filenames$truck_cat = as.factor(wd_filenames$truck_cat)
 
 cat_files = group_by(wd_filenames,truck_cat) %>%
-  arrange(.by_group = TRUE)
+  arrange(.by_group = TRUE) %>%
+  ungroup()
 print(cat_files)
 
-#for(i in i:)
+for(truck in levels(cat_files$truck_cat)){
+  w_files = filter(cat_files,truck_cat == truck) %>%
+    select(filenames) %>%
+    droplevels()
+  w_files$filenames = factor(w_files$filenames)
+  flag = TRUE
+  for(file in levels(w_files$filenames)){
+    if(flag){
+      flag = FALSE
+      write_csv(as.data.frame(read_csv(file)),path = paste(export_location,truck,"_merged.csv",sep=""))
+      #print(truck)
+      #print(file)
+    }
+    else{
+      write_csv(as.data.frame(read_csv(file,skip = 1)),path = paste(export_location,truck,"_merged.csv",sep=""),append = TRUE)
+      #print(truck)
+      #print(file)
+    }
+  }
+}
