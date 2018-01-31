@@ -8,12 +8,8 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(lubridate)
-library(iotools)
-library(bigtabulate)
-library(bigmemory)
 
-
-#contans
+#constans
 is.weight_limit = 50
 d_wheel = 0.467 # from catalog
 
@@ -31,19 +27,17 @@ smoothing = 1 # window size
 #where the files to be boxshorted
 
 #PAKS3 (batman)
-setwd("/home/vassb/fingerprint_data/")
-export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift/"
+setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift/")
+export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
 
 #PC
 # setwd("/home/vasy/RStudioProjects/still_github/RStudio_wd_Can_fp/")
 # export_location="/home/vasy/RStudioProjects/still_github/cleaned_files/"
 
 #Cut of ".mat" for classification categories
-wd_filenames = list.files(pattern = '\\.mat$')
+wd_filenames = list.files(pattern = '\\.csv$')
 fp_df = data.frame()
-for(i in 1:length(wd_filenames)){
-  wd_filenames[i]=gsub(".mat","",c(wd_filenames[i]),fixed = TRUE)
-}
+
 
 # for(file_name in list.files())
 # {
@@ -54,49 +48,7 @@ temp_list = list()
 for(file_name_i in wd_filenames)
 {
   print(paste("file:",file_name_i))
-  #temp_list = readMat(paste(file_name_i,".mat",sep=""))
-
-  fp_df <- chunk.apply(paste(file_name_i,".mat",sep=""),
-                                # A function to process each of the chunk
-                                function(chunk) {
-                                  # Turn the chunk into a data frame
-                                  for(colName in names(chunk)) {
-                                    print(names(chunk[[colName]]))
-                                   # temp_list$colName=rbind(temp_list$colName,dstrsplit(chunk[[colName]], col_types = rep("numeric", 2), sep = ",") %>%
-                                   #    mutate(V1 = round(V1)) %>%
-                                   #    group_by(V1) %>%
-                                   #    summarise_all(mean,na.rm = FALSE) %>%
-                                   #    as.list()
-                                   #)
-                                  }
-                                  join_all(temp_list, by='V1', type = 'outer') %>%
-                                  as.data.frame()
-                                  
-                                  # Return the column sums
-                                  
-                                },
-                                # Maximum chunk size in bytes
-                                CH.MAX.SIZE = 1e5)
-  # 2 processors read and process data
-  #parallel = 2)
-  
-  #glimpse(temp_list)
-  #print(names(temp_list))
-  
-  #all timestamp possibilites for boxshort (max calculated /file)
-  # fp_df = data.frame(
-  #   0:(
-  #     max(
-  #       temp_list$UE.DAC.6.Auslenkung.Z.prop.....................................[,1]
-  #     )
-  #     + 1
-  #   )
-  # )
-  # names(fp_df) = "time_ID"
-  # 
-
-  #print(names(fp_df))
-  #
+  fp_df = as.data.frame(read_csv(file_name_i))
   
   #cleaning solution
   df_fp_tidy = fp_df %>% 
@@ -185,8 +137,8 @@ for(file_name_i in wd_filenames)
   # warnings()
   
   #RDS
-  saveRDS(df_fp_tidy_no_na,file=paste(export_location,file_name_i,".rds",sep=""))
-  print(paste(file_name_i,".rds is saved to: ",export_location,sep = ""))
+  saveRDS(df_fp_tidy_no_na,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),".rds",sep=""))
+  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),".rds is saved to: ",export_location,sep = ""))
   
   ##################################################################################################################################################################################################################
   #windowing and attributes
@@ -269,8 +221,8 @@ for(file_name_i in wd_filenames)
     ) %>%
     
   #savaRDS to attributes
-  saveRDS(tdf_attributes,file=paste(export_location,file_name_i,"_att.rds",sep=""))
-  print(paste(file_name_i,"_att.rds is saved to: ",export_location,sep = ""))
+  saveRDS(tdf_attributes,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds",sep=""))
+  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds is saved to: ",export_location,sep = ""))
   
   only_att = tdf_attributes %>%
     select(
@@ -290,7 +242,7 @@ for(file_name_i in wd_filenames)
       driving_or_standing
     )
 
-  saveRDS(only_att,file=paste(export_location,file_name_i,"_only_att.rds",sep=""))
-  print(paste(file_name_i,"_only_att.rds is saved to: ",export_location,sep = ""))
+  saveRDS(only_att,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.rds",sep=""))
+  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.rds is saved to: ",export_location,sep = ""))
 }
 
