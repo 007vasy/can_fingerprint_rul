@@ -173,8 +173,7 @@ for(file_name_i in wd_filenames)
       else
         factor_variations_string = c(factor_variations_string,paste(temp_m[i,1],temp_m[i,2],sep = ","))
     }
-    #???
-    return(temp_string)
+    return(factor_variations_string)
   }
   
   #is.weight on the truck
