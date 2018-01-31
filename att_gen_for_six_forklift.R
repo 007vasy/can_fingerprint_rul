@@ -208,9 +208,12 @@ for(file_name_i in wd_filenames)
       
       speed_torque_1_factor = paste(speed_1_modulo_factor,torque_1_modulo_factor,sep=","),
       speed_torque_2_factor = paste(speed_2_modulo_factor,torque_2_modulo_factor,sep=","),
-      
-      speed_torque_1_factor = as.factor(speed_torque_1_factor,labels = factor_variations(reso_m)),
-      speed_torque_2_factor = as.factor(speed_torque_2_factor,labels = factor_variations(reso_m)),
+ 
+      speed_torque_1_factor = as.factor(speed_torque_1_factor),
+      speed_torque_2_factor = as.factor(speed_torque_2_factor),
+           
+      #speed_torque_1_factor = as.factor(speed_torque_1_factor,labels = factor_variations(reso_m)),
+      #speed_torque_2_factor = as.factor(speed_torque_2_factor,labels = factor_variations(reso_m)),
       
       driving_or_standing = Speed_Drivemotor_1_RPM == 0 & Speed_Drivemotor_2_RPM == 0 & Torque_Drivemotor_1_Nm == 0 & Torque_Drivemotor_1_Nm == 0,
       
