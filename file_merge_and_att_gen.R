@@ -11,8 +11,8 @@ library(lubridate)
 #setwd("/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/")
 #export_location="/media/vasy/Data/Doksik/projekts/AITIA/reduced_can_fp/merged_machines/"
 #PAKS3 (batman)
-setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift/")
-export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
+setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift_att/")
+export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_att_merged/"
 
 truck_category <- function(x){
   if(str_detect(x,'Daimler F 00150'))
@@ -53,12 +53,12 @@ for(truck in levels(cat_files$truck_cat)){
   for(file in levels(w_files$filenames)){
     if(flag){
       flag = FALSE
-      write_csv(as.data.frame(read_csv(file)),path = paste(export_location,truck,"_merged.csv",sep=""))
+      write_csv(as.data.frame(read_csv(file)),path = paste(export_location,truck,"_att_merged.csv",sep=""))
       #print(truck)
       #print(file)
     }
     else{
-      write_csv(as.data.frame(read_csv(file,skip = 1)),path = paste(export_location,truck,"_merged.csv",sep=""),append = TRUE)
+      write_csv(as.data.frame(read_csv(file,skip = 1)),path = paste(export_location,truck,"_att_merged.csv",sep=""),append = TRUE)
       #print(truck)
       #print(file)
     }

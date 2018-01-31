@@ -28,6 +28,7 @@ smoothing = 1 # window size
 #PAKS3 (batman)
 setwd("/home/vassb/fingerprint_data/ansgar_att_six_forklift/")
 export_location="/home/vassb/fingerprint_data/ansgar_att_six_forklift_merged/"
+export_location2="/home/vassb/fingerprint_data/ansgar_att_six_forklift_att/"
 
 #PC
 # setwd("/home/vasy/RStudioProjects/still_github/RStudio_wd_Can_fp/")
@@ -216,8 +217,8 @@ for(file_name_i in wd_filenames)
     )
     
   #savaRDS to attributes
-  saveRDS(tdf_attributes,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds",sep=""))
-  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds is saved to: ",export_location,sep = ""))
+  #saveRDS(tdf_attributes,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds",sep=""))
+  #print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds is saved to: ",export_location,sep = ""))
   
   only_att = tdf_attributes %>%
     select(
@@ -237,7 +238,7 @@ for(file_name_i in wd_filenames)
       driving_or_standing
     )
 
-  saveRDS(only_att,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.rds",sep=""))
-  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.rds is saved to: ",export_location,sep = ""))
+  write_csv(only_att,path=paste(export_location2,gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.csv",sep=""))
+  print(paste(gsub(".csv","",file_name_i,fixed = TRUE),"_only_att.csv is saved to: ",export_location2,sep = ""))
 }
 
