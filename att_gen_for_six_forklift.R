@@ -218,7 +218,7 @@ for(file_name_i in wd_filenames)
       driving_or_standing = Speed_Drivemotor_1_RPM == 0 & Speed_Drivemotor_2_RPM == 0 & Torque_Drivemotor_1_Nm == 0 & Torque_Drivemotor_1_Nm == 0,
       
       is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor
-    ) %>%
+    )
     
   #savaRDS to attributes
   saveRDS(tdf_attributes,file=paste(export_location,gsub(".csv","",file_name_i,fixed = TRUE),"_att.rds",sep=""))
