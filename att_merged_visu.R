@@ -9,6 +9,7 @@ library(stringr)
 library(lubridate)
 library(plot3D)
 
+
 hist3D_fancy<- function(x, y, break.func = c("Sturges", "scott", "FD"), breaks = NULL,
                         colvar = NULL, col="white", clab=NULL, phi = 5, theta = 25, ...){
   
@@ -55,13 +56,28 @@ hist3D_fancy<- function(x, y, break.func = c("Sturges", "scott", "FD"), breaks =
 IMRl_F_00214_att_merged <- as.data.frame(read_csv("/media/vasy/Data/Doksik/projekts/AITIA/can_fp_att_merged/IMRl_F_00214_att_merged.csv"))
 
 scatter3D(x = IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,y=IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM, z= IMRl_F_00214_att_merged$Steering_angle_angle)
-points3D(x = IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,y=IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM, z= IMRl_F_00214_att_merged$Steering_angle_angle)
+# points3D(x = IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,y=IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM, z= IMRl_F_00214_att_merged$Steering_angle_angle)
 
+#speed and torque 3D profile
 IMRl_F_00214_comp = IMRl_F_00214_att_merged[complete.cases(IMRl_F_00214_att_merged), ]
 hist3D_fancy(x = IMRl_F_00214_comp$Torque_Drivemotor_1_Nm,y=IMRl_F_00214_comp$Speed_Drivemotor_1_RPM, colvar= IMRl_F_00214_comp$Steering_angle_angle, breaks = 8)
+# 
+# hist3D(x= range(IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,finite = TRUE),y=range(IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM,finite = TRUE),z = as.matrix(IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM,IMRl_F_00214_att_merged$Steering_angle_angle))
+# 
+# tail(IMRl_F_00214_att_merged)
+# 
+# summary(IMRl_F_00214_att_merged)
 
-hist3D(x= range(IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,finite = TRUE),y=range(IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM,finite = TRUE),z = as.matrix(IMRl_F_00214_att_merged$Torque_Drivemotor_1_Nm,IMRl_F_00214_att_merged$Speed_Drivemotor_1_RPM,IMRl_F_00214_att_merged$Steering_angle_angle))
+#IMRl_F_00214_comp_100 = head(IMRl_F_00214_comp,100)
+#summary(IMRl_F_00214_comp_100000)
+IMRL_steer = IMRl_F_00214_comp %>%
+  mutate(
+    steering_cat = case_when(
+        abs(Steering_angle_angle) <=  30 ~ 1,
+        abs(Steering_angle_angle) <=  60 ~ 2,
+        TRUE ~ 3
+      )
+  )
+#summary(IMRL_steer)
+hist3D_fancy(x=IMRL_steer$Speed_Drivemotor_1_RPM,y = IMRL_steer$Torque_Drivemotor_1_Nm, col = IMRL_steer$steering_cat, breaks = 8)
 
-tail(IMRl_F_00214_att_merged)
-
-summary(IMRl_F_00214_att_merged)
