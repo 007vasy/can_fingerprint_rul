@@ -76,13 +76,17 @@ for(file in file_list)
       for(s_type in 1:max(temp_df_com$steering_cat)){
         plot_df = temp_df_com %>%
           filter(steering_cat == s_type, is.weight == wl_wol )
+        #Dynamic
         hist3D_fancy(x=plot_df$Speed_Drivemotor_1_RPM,y = plot_df$Torque_Drivemotor_1_Nm, xlab = "RPM", ylab ="Nm", breaks = 8,main = paste("Dynamic_",gsub(".csv","",file,fixed = TRUE),"_s_type:",s_type,"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
         png(filename = paste(export_location,"Dynamic_",gsub(".csv","",file,fixed = TRUE),"_s_type:",s_type,"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
       }
       plot_df = temp_df_com %>%
-        filter(is.weight == wl_wol )
+        filter(is.weight == wl_wol)
+      #Stress
       hist3D_fancy(x=as.numeric(plot_df$date_time),y = plot_df$Torque_Drivemotor_1_Nm, breaks = 8, xlab = "RPM", ylab ="Nm", breaks = 8, main = paste("Stress_",gsub(".csv","",file,fixed = TRUE),"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
       png(filename = paste(export_location,"Stress_",gsub(".csv","",file,fixed = TRUE),"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
+      
+      #Travelling
       hist3D_fancy(x=as.numeric(plot_df$date_time),y = plot_df$Speed_Drivemotor_1_RPM, breaks = 8, xlab = "RPM", ylab ="Nm", breaks = 8, main = paste("Travelling_",gsub(".csv","",file,fixed = TRUE),"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
       png(filename = paste(export_location,"Travelling_",gsub(".csv","",file,fixed = TRUE),"_wl_wol_",wl_wol,"_3Dplot.png",sep=""))
   }
