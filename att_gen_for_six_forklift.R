@@ -213,7 +213,12 @@ for(file_name_i in wd_filenames)
  
       driving_or_standing = Speed_Drivemotor_1_RPM == 0 & Speed_Drivemotor_2_RPM == 0 & Torque_Drivemotor_1_Nm == 0 & Torque_Drivemotor_1_Nm == 0,
       
-      is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor
+      is.speed_torque_factor_equal = speed_torque_1_factor == speed_torque_2_factor,
+      steering_cat = case_when(
+          abs(Steering_angle_angle) <=  30 ~ 1,
+          abs(Steering_angle_angle) <=  60 ~ 2,
+          TRUE ~ 3
+        )
     )
     
   #savaRDS to attributes
@@ -229,7 +234,9 @@ for(file_name_i in wd_filenames)
       Torque_Drivemotor_1_Nm,
       Steering_angle_angle, 
       
-      #events
+      
+      #events and categories
+      steering_cat,
       speed_torque_1_factor,
       speed_torque_2_factor,
       is.y_direction_0,
